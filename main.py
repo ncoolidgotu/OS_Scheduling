@@ -19,13 +19,6 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         self.graphWindow.addWidget(Graph(self))
         
 
-class SubWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        # Add some content to the subwindow
-        layout = QVBoxLayout(self)
-        layout.addWidget(chart)
-        
 class GUI: #Class to control GUI windows
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv) #Widgets is used to organize GUI windows
@@ -48,14 +41,13 @@ class Graph(FigureCanvas):
         """ 
         Matplotlib Script
         """
-        t = np.arange(0.0, 2.0, 0.01)
-        s = 1 + np.sin(2 * np.pi * t)
-        
-        self.ax.plot(t, s)
-
-        self.ax.set(xlabel='time (s)', ylabel='voltage (mV)',
-            title='About as simple as it gets, folks')
-        self.ax.grid()
+        left_coordinates=[1,2,3,4,5]
+        heights=[10,20,30,15,40]
+        bar_labels=['One','Two','Three','Four','Five']
+        plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
+        plt.xlabel('Time')
+        plt.ylabel('Process ID')
+        plt.title("Graph Name Goes Here")
         
 if __name__ == "__main__":
     pygame.mixer.init()     # loads the background music
