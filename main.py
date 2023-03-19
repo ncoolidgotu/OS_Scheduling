@@ -11,19 +11,18 @@ import pygame   #For background music
 class MainWindow(QMainWindow): #Derived class of QMainWindow to control functionality inside the windows
     def __init__(self):
         # Create a QMdiArea widget
+        self.mdiArea = QtWidgets.QMdiArea()
         super(MainWindow,self).__init__()
         loadUi("MainWindow.ui",self)  # Loads the window from main menu .ui file
         #self.inputFile.clicked.connect(ProcessReader.selectFile)  
         self.showGraph.clicked.connect(Graph.show)
-        subWindow = SubWindow()
-        self.mdiArea.addSubWindow(subWindow)
+        self.graphWindow.addWidget(Graph(self))
         
 
 class SubWindow(QWidget):
     def __init__(self):
         super().__init__()
         # Add some content to the subwindow
-        chart = Graph(self)
         layout = QVBoxLayout(self)
         layout.addWidget(chart)
         
