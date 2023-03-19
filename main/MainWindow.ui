@@ -403,12 +403,12 @@
      </property>
     </item>
    </widget>
-   <widget class="QMdiArea" name="mdiArea">
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>400</x>
       <y>100</y>
-      <width>831</width>
+      <width>851</width>
       <height>451</height>
      </rect>
     </property>
