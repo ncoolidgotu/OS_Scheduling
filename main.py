@@ -2,7 +2,7 @@ import sys
 import numpy as np
 from PyQt6 import QtWidgets #For Changing GUI Screens
 from PyQt6.QtCore import QDate, QDateTime
-from PyQt6.QtWidgets import QApplication, QMainWindow, QErrorMessage, QMessageBox #For GUI Functionality
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout #For GUI Functionality
 from PyQt6.uic import loadUi #For UI importing
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -10,13 +10,22 @@ import pygame   #For background music
 
 class MainWindow(QMainWindow): #Derived class of QMainWindow to control functionality inside the windows
     def __init__(self):
+        # Create a QMdiArea widget
         super(MainWindow,self).__init__()
         loadUi("MainWindow.ui",self)  # Loads the window from main menu .ui file
         #self.inputFile.clicked.connect(ProcessReader.selectFile)  
         self.showGraph.clicked.connect(Graph.show)
-        graph = Graph(self)
-        vbox.addWidget(graph)
+        subWindow = SubWindow()
+        self.mdiArea.addSubWindow(subWindow)
         
+
+class SubWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        # Add some content to the subwindow
+        chart = Graph(self)
+        layout = QVBoxLayout(self)
+        layout.addWidget(chart)
         
 class GUI: #Class to control GUI windows
     def __init__(self):
