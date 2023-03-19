@@ -403,6 +403,16 @@
      </property>
     </item>
    </widget>
+   <widget class="QMdiArea" name="mdiArea">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>100</y>
+      <width>831</width>
+      <height>451</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>
