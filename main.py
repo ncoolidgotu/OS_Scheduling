@@ -71,15 +71,17 @@ class Graph(FigureCanvas):
         Matplotlib Script
         """
         coord=gui.mainWindow.stats
+        time = [0]
+        proc_id = [0]
         for i in coord:
-            time =[i[0]]
+            time.append(i[0])
+            proc_id.append(i[1])
         left_coordinates = time
-        heights=[i[1]]
-        bar_labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
+        heights=proc_id
+        plt.step(left_coordinates,heights)
         plt.xlabel('Time')
         plt.ylabel('Process ID')
-        plt.title("Will fix later")
+        plt.title(gui.mainWindow.selectAlgo.currentText())
 
         
 class ProcessReader:
