@@ -70,11 +70,11 @@ class Graph(FigureCanvas):
         """ 
         Matplotlib Script
         """
-        Coord=gui.mainWindow.stats
-        for i in Coord:
-            left_coordinates=[i[0]]
-        for i in Coord:
-            heights=[i[1]]
+        coord=gui.mainWindow.stats
+        for i in coord:
+            time =[i[0]]
+        left_coordinates = time
+        heights=[i[1]]
         bar_labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
         plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
         plt.xlabel('Time')
