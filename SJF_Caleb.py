@@ -6,37 +6,10 @@ class Process:
         self.arrival_time = arrival_time
         self.burst_time = burst_time
 
-class ProcessReader:
-    def __init__(self):
-        self.filename = None
-        
-    def select_file(self):
-        root = tk.Tk()
-        root.withdraw()
-        self.filename = filedialog.askopenfilename()
-
-    def selectFile(self):
-        if not self.filename:
-            self.select_file()
-        NumbProcesses = []
-        with open(self.filename, 'r') as f:
-            next(f)
-            for line in f:
-                process_info = line.strip().split()
-                pid = int(process_info[0])
-                arrival_time = int(process_info[1])
-                burst_time = int(process_info[2])
-                NumbProcesses.append(Process(pid, arrival_time, burst_time))
-        return NumbProcesses
-
-
-reader = ProcessReader()
-processes = reader.selectFile()
-
 
 class SJF:
 
-    def processData(self):
+    def processData(self, processes):
         process_data = []
         #Gets the values for each process
         for process in processes:
@@ -142,7 +115,6 @@ class SJF:
 
 if __name__ == "__main__":
     sjf = SJF()
-    sjf.processData()
 
 
 print()

@@ -7,8 +7,15 @@ from PyQt6.uic import loadUi #For UI importing
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pygame   #For background music
-import SJF_Caleb
+import SJF_Caleb as sjf
+import tkinter as tk
+from tkinter import filedialog
 
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
 
 class MainWindow(QMainWindow): #Derived class of QMainWindow to control functionality inside the windows
     def __init__(self):
@@ -17,12 +24,19 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         super(MainWindow,self).__init__()
         loadUi("MainWindow.ui",self)  # Loads the window from main menu .ui file
         #self.inputFile.clicked.connect(ProcessReader.selectFile)  
-        self.showGraph.clicked.connect(Graph.show)
-        self.graphWindow.addWidget(Graph(self))
+        self.showGraph.clicked.connect(self.updateGraph)
+        self.inputFile.clicked.connect(self.input_File)
+        
 
     def typeAlgo(self):
-         if self.selectAlgo.currentText() == "SJF":
-              SJF_Caleb.SJF.processData()
+        if self.selectAlgo.currentText() == "SJF":
+            sjf.sjf.processData(processQueue)
+    
+    def updateGraph(self):
+        self.graphWindow.addWidget(Graph(self))
+    
+    def input_File(self):
+        processQueue.generateQueue()
         
 
 class GUI: #Class to control GUI windows
@@ -56,10 +70,39 @@ class Graph(FigureCanvas):
         plt.ylabel('Process ID')
         plt.title("Graph Name Goes Here")
         
+class ProcessReader:
+    def __init__(self):
+        self.filename = None
+        
+    def select_file(self):
+        root = tk.Tk()
+        root.withdraw()
+        self.filename = filedialog.askopenfilename()
+
+    def selectFile(self):
+        self.select_file()
+        NumbProcesses = []
+        with open(self.filename, 'r') as f:
+            next(f)
+            for line in f:
+                process_info = line.strip().split()
+                pid = int(process_info[0])
+                arrival_time = int(process_info[1])
+                burst_time = int(process_info[2])
+                NumbProcesses.append(Process(pid, arrival_time, burst_time))
+        return NumbProcesses
+    
+    def generateQueue(self):
+        self.processes = self.selectFile()
+        print(self.processes)
+
+        
 if __name__ == "__main__":
     pygame.mixer.init()     # loads the background music
     pygame.mixer.music.load("bgm.mp3")
     pygame.mixer.music.play()
+    processQueue = ProcessReader()
+    processQueue.generateQueue()
     gui = GUI()
     gui.buildGUI()
 
