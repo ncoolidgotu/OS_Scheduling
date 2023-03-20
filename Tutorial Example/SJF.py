@@ -81,12 +81,12 @@ class SJF:
     def calculateWaitingTime(self, process_data):
         total_waiting_time = 0
         for i in range(len(process_data)):
-            waiting_time = process_data[i][5] - process_data[i][2]
             #waiting_time = turnaround_time - burst_time
+            waiting_time = process_data[i][5] - process_data[i][2]
             total_waiting_time = total_waiting_time + waiting_time
             process_data[i].append(waiting_time)
+        #average_waiting_time = total_waiting_time / no_of_processes    
         average_waiting_time = total_waiting_time / len(process_data)
-        #average_waiting_time = total_waiting_time / no_of_processes
         return average_waiting_time
 
 
@@ -109,3 +109,13 @@ if __name__ == "__main__":
     no_of_processes = int(input("Enter number of processes: "))
     sjf = SJF()
     sjf.processData(no_of_processes)
+
+
+'''
+    num_processes = int(f.readline())
+    processes = []
+    for i in range(num_processes):
+        process_params = f.readline().strip().split()
+        process_number, arrival_time, burst_time, priority = [int(x) for x in process_params]
+        processes.append(Process(process_number, arrival_time, burst_time, priority))
+'''
