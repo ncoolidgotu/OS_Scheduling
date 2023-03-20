@@ -8,7 +8,6 @@ class Process:
 
 
 class SJF:
-
     def processData(self, processes):
         process_data = []
         #Gets the values for each process
@@ -19,7 +18,7 @@ class SJF:
             process_data.append(temporary)
 
 
-        SJF.schedulingProcess(self, process_data)
+        return SJF.schedulingProcess(self, process_data)
     def schedulingProcess(self, process_data):
         start_time = []
         exit_time = []
@@ -72,7 +71,7 @@ class SJF:
 
         t_time = SJF.calculateTurnaroundTime(self, process_data)
         w_time = SJF.calculateWaitingTime(self, process_data)
-        SJF.printData(self, process_data, t_time, w_time)
+        return SJF.printData(self, process_data, t_time, w_time)
 
 
     def calculateTurnaroundTime(self, process_data):
@@ -112,9 +111,8 @@ class SJF:
         print(f'Average Turnaround Time: {average_turnaround_time}')
 
         print(f'Average Waiting Time: {average_waiting_time}')
-
-if __name__ == "__main__":
-    sjf = SJF()
-
-
-print()
+        
+        NewArray = []
+        for i in range(len(process_data)):
+            NewArray.append([process_data[i][0], process_data[i][4]])
+        return NewArray

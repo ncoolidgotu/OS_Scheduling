@@ -7,7 +7,7 @@ from PyQt6.uic import loadUi #For UI importing
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pygame   #For background music
-import SJF_Caleb as sjf
+import SJF_Caleb
 import tkinter as tk
 from tkinter import filedialog
 
@@ -28,12 +28,20 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         self.inputFile.clicked.connect(self.input_File)
         
 
-    def typeAlgo(self):
+    def select_Algo(self):
+        print(self.selectAlgo.currentText())
         if self.selectAlgo.currentText() == "SJF":
-            sjf.sjf.processData(processQueue)
+            sjf = SJF_Caleb.SJF()
+            stats = sjf.processData(processQueue.processes)
+            print(stats)
     
     def updateGraph(self):
+        try:
+            self.graphWindow.removeItem(self.graphWindow.itemAt(0))
+        except TypeError:
+            self.graphWindow.addWidget(Graph(self))
         self.graphWindow.addWidget(Graph(self))
+        self.select_Algo()
     
     def input_File(self):
         processQueue.generateQueue()
