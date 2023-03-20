@@ -32,8 +32,8 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         print(self.selectAlgo.currentText())
         if self.selectAlgo.currentText() == "SJF":
             sjf = SJF_Caleb.SJF()
-            stats = sjf.processData(processQueue.processes)
-            print(stats)
+            self.stats = sjf.processData(processQueue.processes)
+            print(self.stats)
     
     def updateGraph(self):
         try:
