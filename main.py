@@ -7,6 +7,8 @@ from PyQt6.uic import loadUi #For UI importing
 import matplotlib.pyplot as plt 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pygame   #For background music
+import SJF_Caleb
+
 
 class MainWindow(QMainWindow): #Derived class of QMainWindow to control functionality inside the windows
     def __init__(self):
@@ -17,6 +19,10 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         #self.inputFile.clicked.connect(ProcessReader.selectFile)  
         self.showGraph.clicked.connect(Graph.show)
         self.graphWindow.addWidget(Graph(self))
+
+    def typeAlgo(self):
+         if self.selectAlgo.currentText() == "SJF":
+              SJF_Caleb.SJF.processData()
         
 
 class GUI: #Class to control GUI windows
@@ -31,6 +37,7 @@ class GUI: #Class to control GUI windows
             self.screen.setFixedWidth(1280)
             self.screen.show() #Display window
             self.app.exec() #Execute GUI
+
 
 class Graph(FigureCanvas):
     def __init__(self, parent):
