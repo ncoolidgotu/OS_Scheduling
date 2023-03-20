@@ -70,12 +70,12 @@ class SJF:
     def calculateTurnaroundTime(self, process_data):
         total_turnaround_time = 0
         for i in range(len(process_data)):
-            turnaround_time = process_data[i][4] - process_data[i][1]
             #turnaround_time = completion_time - arrival_time
+            turnaround_time = process_data[i][4] - process_data[i][1]
             total_turnaround_time = total_turnaround_time + turnaround_time
             process_data[i].append(turnaround_time)
+        #average_turnaround_time = total_turnaround_time / no_of_processes    
         average_turnaround_time = total_turnaround_time / len(process_data)
-        #average_turnaround_time = total_turnaround_time / no_of_processes
         return average_turnaround_time
     
     def calculateWaitingTime(self, process_data):
