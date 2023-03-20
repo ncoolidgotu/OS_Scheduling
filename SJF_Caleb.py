@@ -114,5 +114,6 @@ class SJF:
         
         NewArray = []
         for i in range(len(process_data)):
-            NewArray.append([process_data[i][0], process_data[i][4]])
+            NewArray.append([process_data[i][4], process_data[i][0]])
+            NewArray.sort()
         return NewArray
