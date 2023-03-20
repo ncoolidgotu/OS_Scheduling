@@ -51,10 +51,10 @@ class GUI: #Class to control GUI windows
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv) #Widgets is used to organize GUI windows
         self.screen =  QtWidgets.QStackedWidget() #Stacked widgets allows multiple windows to be created
-        self.mainMenu = MainWindow() #Set first window to Main Menu UI
+        self.mainWindow = MainWindow() #Set first window to Main Menu UI
         
     def buildGUI(self): #Build the GUI
-            self.screen.addWidget(self.mainMenu) #Screen Index 0
+            self.screen.addWidget(self.mainWindow) #Screen Index 0
             self.screen.setFixedHeight(720) #constrain window dimensions
             self.screen.setFixedWidth(1280)
             self.screen.show() #Display window
@@ -76,7 +76,8 @@ class Graph(FigureCanvas):
         plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
         plt.xlabel('Time')
         plt.ylabel('Process ID')
-        plt.title("Graph Name Goes Here")
+        plt.title("Will fix later")
+
         
 class ProcessReader:
     def __init__(self):
