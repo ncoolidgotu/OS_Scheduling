@@ -36,12 +36,12 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
             print(self.stats)
     
     def updateGraph(self):
+        self.select_Algo()
         try:
             self.graphWindow.removeItem(self.graphWindow.itemAt(0))
         except TypeError:
             self.graphWindow.addWidget(Graph(self))
         self.graphWindow.addWidget(Graph(self))
-        self.select_Algo()
     
     def input_File(self):
         processQueue.generateQueue()
@@ -75,7 +75,7 @@ class Graph(FigureCanvas):
             left_coordinates=[i[0]]
         for i in Coord:
             heights=[i[1]]
-        bar_labels=[]
+        bar_labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
         plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
         plt.xlabel('Time')
         plt.ylabel('Process ID')
