@@ -70,9 +70,12 @@ class Graph(FigureCanvas):
         """ 
         Matplotlib Script
         """
-        left_coordinates=[1,2,3,4,5]
-        heights=[10,20,30,15,40]
-        bar_labels=['One','Two','Three','Four','Five']
+        Coord=gui.mainWindow.stats
+        for i in Coord:
+            left_coordinates=[i[0]]
+        for i in Coord:
+            heights=[i[1]]
+        bar_labels=[]
         plt.bar(left_coordinates,heights,tick_label=bar_labels,width=1)
         plt.xlabel('Time')
         plt.ylabel('Process ID')
