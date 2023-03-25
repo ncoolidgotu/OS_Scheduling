@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pygame   #For background music
 import SJF_Caleb
+import robin
 import tkinter as tk
 from tkinter import filedialog
 
@@ -33,6 +34,11 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
         if self.selectAlgo.currentText() == "SJF":
             sjf = SJF_Caleb.SJF()
             self.stats = sjf.processData(processQueue.processes)
+            print(self.stats)
+        elif self.selectAlgo.currentText() == "RR":
+            print(self.quantumTime.text())
+            rr = robin.Robin(quantum=int(self.quantumTime.text()))
+            self.stats = rr.schedulingProcess(processQueue.processes)
             print(self.stats)
     
     def updateGraph(self):

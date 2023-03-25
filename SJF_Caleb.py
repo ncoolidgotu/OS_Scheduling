@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+
 class Process:
     def __init__(self, pid, arrival_time, burst_time):
         self.pid = pid
