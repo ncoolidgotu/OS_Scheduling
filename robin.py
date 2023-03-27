@@ -48,7 +48,6 @@ class Robin:
             current_process = self.cpu_queue.pop(0)
             if current_process.remaining_time > self.quantum:
                 start_time.append(self.timer)
-                print(dir(processes[0]))
                 time = self.execute(current_process)
                 self.timer += time
                 self.cpu_queue.append(current_process)
