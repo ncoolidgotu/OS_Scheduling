@@ -123,9 +123,9 @@ class ProcessReader:
 
         
 if __name__ == "__main__":
-    pygame.mixer.init()     # loads the background music
-    pygame.mixer.music.load("bgm.mp3")
-    pygame.mixer.music.play()
+    #pygame.mixer.init()     # loads the background music
+    #pygame.mixer.music.load("bgm.mp3")
+    #pygame.mixer.music.play()
     processQueue = ProcessReader()
     processQueue.generateQueue()
     gui = GUI()

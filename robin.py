@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
+
 
 class Process:
     def __init__(self, pid, arrival_time, burst_time):
@@ -19,7 +19,7 @@ class Robin:
             '0' is the state of the process. 0 means not executed and 1 means execution complete
             '''
             process_data.append(temporary)
-        Robin.schedulingProcess(self, process_data, quantumTime, contextSwitchTime)
+        return Robin.schedulingProcess(self, process_data, quantumTime, contextSwitchTime)
 
     def schedulingProcess(self, process_data, quantumTime, contextSwitchTime):
         start_time = []
@@ -100,7 +100,7 @@ class Robin:
                     switch_time += contextSwitchTime
         t_time = Robin.calculateTurnaroundTime(self, process_data)
         w_time = Robin.calculateWaitingTime(self, process_data)
-        Robin.printData(self, process_data, t_time, w_time, executed_process)
+        return Robin.printData(self, process_data, t_time, w_time, executed_process)
 
     def calculateTurnaroundTime(self, process_data):
         total_turnaround_time = 0
@@ -151,4 +151,5 @@ class Robin:
             NewArray.append([process_data[i][4], process_data[i][0]])
             NewArray.sort()
             print(NewArray)
+        print(NewArray)
         return NewArray
