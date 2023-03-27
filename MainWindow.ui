@@ -426,7 +426,7 @@
      </font>
     </property>
     <property name="text">
-     <string>0</string>
+     <string>1</string>
     </property>
     <property name="maxLength">
      <number>32767</number>
