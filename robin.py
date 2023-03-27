@@ -7,52 +7,71 @@ class Process:
         self.arrival_time = arrival_time
         self.burst_time = burst_time
         self.priority = priority
-        self.remaining_time = burst_time
+        self.remaining_time = self.burst_time
     
-    def execute(self, time_quantum):
-        # execute the process for the given time quantum
-        if self.remaining_time > time_quantum:
-            self.remaining_time -= time_quantum
-            return time_quantum
-        else:
-            temp = self.remaining_time
+    def execute(self, quantum):
+        if self.remaining_time <= quantum:
+            time = self.remaining_time
             self.remaining_time = 0
-            return temp
+        else:
+            time = quantum
+            self.remaining_time -= quantum
+        return time
+
 
 class Robin:
-    def __init__(self, quantum):
+    def __init__(self, quantum, context_switching):
         self.quantum = quantum
+        self.context_switching = context_switching
+        self.cpu_queue = []
+        self.timer = 0
 
     def schedulingProcess(self, processes):
+        ready_queue = processes.copy()
         start_time = []
         exit_time = []
-        remaining_time = [p.burst_time for p in processes]
-        time = 0
         i = 0
         while True:
             flag = True
-            for j in range(len(processes)):
-                if remaining_time[j] > 0:
+            for j in range(len(ready_queue)):
+                if ready_queue[j].arrival_time <= self.timer:
+                    self.cpu_queue.append(ready_queue[j])
+                    ready_queue.pop(j)
                     flag = False
-                    if remaining_time[j] > self.quantum:
-                        start_time.append(time)
-                        time += self.quantum
-                        exit_time.append(time)
-                        remaining_time[j] -= self.quantum
-                    else:
-                        start_time.append(time)
-                        time += remaining_time[j]
-                        exit_time.append(time)
-                        remaining_time[j] = 0
-            if flag == True:
+                    break
+            if flag and not self.cpu_queue:
+                self.timer += 1
+                continue
+
+            self.cpu_queue.sort(key=lambda x: x.pid)
+            current_process = self.cpu_queue.pop(0)
+            if current_process.remaining_time > self.quantum:
+                start_time.append(self.timer)
+                time = current_process.execute(self.quantum)
+                self.timer += time
+                self.cpu_queue.append(current_process)
+                self.timer += self.context_switching
+            else:
+                start_time.append(self.timer)
+                time = current_process.execute(current_process.remaining_time)
+                self.timer += time
+                exit_time.append(self.timer)
+                i += 1
+            
+            for j in range(len(ready_queue)):
+                if ready_queue[j].arrival_time <= self.timer:
+                    for k in range(len(self.cpu_queue)):
+                        if (ready_queue[j].arrival_time < self.cpu_queue[k].arrival_time) or (ready_queue[j].arrival_time == self.cpu_queue[k].arrival_time and ready_queue[j].priority < self.cpu_queue[k].priority):
+                            self.cpu_queue.insert(k, ready_queue.pop(j))
+                            break
+                    break
+
+            if i == len(processes) and not self.cpu_queue:
                 break
-            i += 1
-            if i == len(processes):
-                i = 0
 
-        return self.printData(processes, start_time, exit_time)
+        return self.print_data(processes, start_time, exit_time)
 
-    def printData(self, processes, start_time, exit_time):
+    def print_data(self, processes, start_time, exit_time):
         total_waiting_time = 0
         total_turnaround_time = 0
         print("Process_ID  Arrival_Time  Burst_Time      Completed  Completion_Time  Turnaround_Time     Waiting_Time")
@@ -65,8 +84,7 @@ class Robin:
         print(f"Average Turnaround Time: {total_turnaround_time/len(processes)}")
         print(f"Average Waiting Time: {total_waiting_time/len(processes)}")
         
-        NewArray = []
-        for i in range(len(processes)):
-            NewArray.append([exit_time[i], processes[i].pid])
-            NewArray.sort()
-        return NewArray
+        new_array = [[exit_time[i], processes[i].pid] for i in range(len(processes))]
+        new_array.sort()
+        return new_array
+

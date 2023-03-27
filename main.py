@@ -37,7 +37,10 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
             print(self.stats)
         elif self.selectAlgo.currentText() == "RR":
             print(self.quantumTime.text())
-            rr = robin.Robin(quantum=int(self.quantumTime.text()))
+            rr = robin.Robin(quantum=int(self.quantumTime.text()), context_switching=int(self.switchTime.text()))
+            # update remaining_time attribute for each process
+            for process in processQueue.processes:
+                process.remaining_time = process.burst_time
             self.stats = rr.schedulingProcess(processQueue.processes)
             print(self.stats)
     
@@ -115,6 +118,11 @@ class ProcessReader:
     def generateQueue(self):
         self.processes = self.selectFile()
         print(self.processes)
+
+    def createProcess(self, pid, burst_time, priority):
+        process = Process(pid, burst_time, priority)
+        process.remaining_time = burst_time  # add remaining_time attribute
+        return process
 
         
 if __name__ == "__main__":
