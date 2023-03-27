@@ -17,9 +17,9 @@ class SJF:
             temporary = []
             temporary.extend([process.pid, process.arrival_time, process.burst_time, 0])
             process_data.append(temporary)
-
-
         return SJF.schedulingProcess(self, process_data)
+    
+    
     def schedulingProcess(self, process_data):
         start_time = []
         exit_time = []

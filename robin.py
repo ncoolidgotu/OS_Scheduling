@@ -8,23 +8,24 @@ class Process:
         self.burst_time = burst_time
         self.priority = priority
         self.remaining_time = self.burst_time
-    
-    def execute(self, quantum):
-        if self.remaining_time <= quantum:
-            time = self.remaining_time
-            self.remaining_time = 0
-        else:
-            time = quantum
-            self.remaining_time -= quantum
-        return time
 
 
 class Robin:
+    
     def __init__(self, quantum, context_switching):
         self.quantum = quantum
         self.context_switching = context_switching
         self.cpu_queue = []
         self.timer = 0
+        
+    def execute(self, process):
+        if process.remaining_time <= self.quantum:
+            time = process.remaining_time
+            process.remaining_time = 0
+        else:
+            time = self.quantum
+            process.remaining_time -= self.quantum
+        return time
 
     def schedulingProcess(self, processes):
         ready_queue = processes.copy()
@@ -47,13 +48,14 @@ class Robin:
             current_process = self.cpu_queue.pop(0)
             if current_process.remaining_time > self.quantum:
                 start_time.append(self.timer)
-                time = current_process.execute(self.quantum)
+                print(dir(processes[0]))
+                time = self.execute(current_process)
                 self.timer += time
                 self.cpu_queue.append(current_process)
                 self.timer += self.context_switching
             else:
                 start_time.append(self.timer)
-                time = current_process.execute(current_process.remaining_time)
+                time = self.execute(current_process)
                 self.timer += time
                 exit_time.append(self.timer)
                 i += 1
