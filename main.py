@@ -37,11 +37,8 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
             print(self.stats)
         elif self.selectAlgo.currentText() == "RR":
             print(self.quantumTime.text())
-            rr = robin.Robin(quantum=int(self.quantumTime.text()), context_switching=int(self.switchTime.text()))
-            # update remaining_time attribute for each process
-            for process in processQueue.processes:
-                process.remaining_time = process.burst_time
-            self.stats = rr.schedulingProcess(processQueue.processes)
+            rr = robin.Robin()
+            self.stats = rr.processData(processes=processQueue.processes, quantumTime=int(self.quantumTime.text()), contextSwitchTime=int(self.switchTime.text()))
             print(self.stats)
     
     def updateGraph(self):
