@@ -71,10 +71,11 @@ class Robin:
                     If process has remaining burst time greater than the time slice, it will execute for a time period equal to time slice and then switch
                     '''
                     start_time.append(s_time)
-                    s_time = s_time + quantumTime
-                    e_time = s_time
+                    s_time = s_time
+                    e_time = s_time + quantumTime
                     exit_time.append(e_time)
-                    executed_process.append(ready_queue[0][0])
+                    executed_process.append([s_time,ready_queue[0][0],e_time])
+                    s_time = e_time
                     for j in range(len(process_data)):
                         if process_data[j][0] == ready_queue[0][0]:
                             break
@@ -86,10 +87,11 @@ class Robin:
                     If a process has a remaining burst time less than or equal to time slice, it will complete its execution
                     '''
                     start_time.append(s_time)
-                    s_time = s_time + ready_queue[0][2]
-                    e_time = s_time
+                    s_time = s_time
+                    e_time = s_time + ready_queue[0][2]
                     exit_time.append(e_time)
-                    executed_process.append(ready_queue[0][0])
+                    executed_process.append([s_time, ready_queue[0][0], e_time])
+                    s_time = e_time
                     for j in range(len(process_data)):
                         if process_data[j][0] == ready_queue[0][0]:
                             break
@@ -147,9 +149,8 @@ class Robin:
         print(f'Sequence of Processes: {executed_process}')
 
         NewArray = []
-        for i in range(len(process_data)):
-            NewArray.append([process_data[i][4], process_data[i][0]])
+        for i in range(len(executed_process)):
+            NewArray.append([executed_process[i][0], executed_process[i][1]])
             NewArray.sort()
-            print(NewArray)
         print(NewArray)
         return NewArray
