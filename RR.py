@@ -117,6 +117,9 @@ class RR:
                         self.current_process.completed_time = timer
                         ready_queue.remove(self.current_process)
                         self.completed.append(self.current_process)
+                    
+                    elif self.quantum == 1 and self.context_switching_amount == 0:
+                        self.state = "i"
 
                     else:
                         if self.current_process.crt == self.quantum:

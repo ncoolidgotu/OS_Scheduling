@@ -4,7 +4,6 @@ from    tkinter import filedialog
 from time import sleep
 from copy import deepcopy
 
-
 class Process:
     def __init__(self, pid, arrival_time, burst_time, priority):
         #process id
@@ -60,7 +59,7 @@ class ProcessReader:
                 print("UNEXPECTED ERROR! Please choose the file again or contact the developer :)")
 
 #We create a class for Shortest Remaining Time First
-class SRTF:
+class SJF:
     #we need a self initialization function to get the data the user specified
     def __init__(self):
         #"i" = idle, "c" = context switching, "r" = running
@@ -69,9 +68,7 @@ class SRTF:
         self.completed = []
         self.graph_data = []
 
-    def scheduling(self,quantum,context_switching_amount,list_of_processes):
-        self.quantum = quantum
-        self.context_switching_amount = context_switching_amount
+    def scheduling(self,list_of_processes):
         self.list_of_processes = deepcopy(list_of_processes) 
         #ready queue for process
         ready_queue = []
@@ -98,50 +95,14 @@ class SRTF:
 
             ready_queue.sort(key=lambda x: (x.remaining_time, -x.priority, x.pid))
 
-            #If the processor is idle
             if self.state == "i":
-
-                #First try to see if something is in the ready queue
                 if len(ready_queue)>0:
-                    #If there is, because it's sorted, and the process is doing nothing, we start running
                     self.state = "r"
-                    #the process with the shortest remaining time
                     self.current_process = ready_queue[0]
-                    #it runs for for 1s, so the remaining time is decreased by 1s
-                    self.current_process.remaining_time -=tempo
-                    #because it ran for 1s, the "current running time" increases by 1
-                    #this will be used in conjunction with the Quantum time later on
-                    self.current_process.crt +=tempo
+                    self.current_process.remaining_time -= tempo
                     self.graph_data.append((self.current_process.pid,timer))
-                    timer +=1
+                    timer+=1
 
-                    if self.current_process.remaining_time == 0:
-                        self.state = "i"
-                        self.current_process.completed_time = timer
-                        ready_queue.remove(self.current_process)
-                        self.completed.append(self.current_process)
-                    
-                    elif self.quantum == 1 and self.context_switching_amount == 0:
-                        self.state = "i"
-
-                    else:
-                        if self.current_process.crt == quantum:
-                            self.current_process.crt = 0
-                            for arrival in self.list_of_processes:
-                                #check the object's "arrival time" attribute
-                                if arrival.arrival_time == timer:
-                                    #if it's time to enter the ready queue, it does
-                                    ready_queue.append(arrival)
-                                    #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
-                                    self.list_of_processes.remove(arrival)
-                            ready_queue.sort(key=lambda x: (x.remaining_time, -x.priority, x.pid))
-
-                            if self.current_process == ready_queue[0]:
-                                self.state = "i"
-                            else:
-                                self.state = "c"
-
-                #If not 2 cases happen
                 else:
                     #If we're just waiting on more processes, then we'll wait
                     if len(self.list_of_processes)>0:
@@ -153,23 +114,13 @@ class SRTF:
                         #then we just end
                         break
 
-            #if the cpu is busy saving a context, we are in the "context saving" state (aka. "c")
-            #we would only ever enter here if the context switching time is > 1:
-            elif self.state == "c":
-                #increase the processes' contextS state
-                self.current_process.contextS += tempo
-                #increase the timer
-                timer += tempo
-                #if we're done context switching
-                if self.current_process.contextS == self.context_switching_amount:
-                    #reset the contextS time, for the next time it may need to context switch
-                    self.current_process.contextS = 0
-                    #make the state of the cpu idle, so that it can properly run the latest process
-                    self.state = "i"
+                    if self.current_process.remaining_time == 0:
+                        self.state = "i"
+                        self.current_process.completed_time = timer
+                        ready_queue.remove(self.current_process)
+                        self.completed.append(self.current_process)
 
-            #if the cpu is busy running, we are in the "running" state (aka "c")
-            #we would only ever enter here if the quantum > 1. 
-            elif self.state == "r":
+            else:
                 self.current_process.remaining_time -= tempo
                 self.current_process.crt += 1
                 self.graph_data.append((self.current_process.pid,timer))
@@ -180,28 +131,7 @@ class SRTF:
                     self.current_process.completed_time = timer
                     ready_queue.remove(self.current_process)
                     self.completed.append(self.current_process)
-                else:
-                    print(self.current_process.crt)
-                    if self.current_process.crt == self.quantum:
-                        self.current_process.crt = 0
-                        for arrival in self.list_of_processes:
-                            #check the object's "arrival time" attribute
-                            if arrival.arrival_time == timer:
-                                #if it's time to enter the ready queue, it does
-                                ready_queue.append(arrival)
-                                #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
-                                self.list_of_processes.remove(arrival)
-                        ready_queue.sort(key=lambda x: (x.remaining_time, -x.priority, x.pid))
 
-                        if self.current_process == ready_queue[0]:
-                            self.state = "i"
-                        else:
-                            if self.context_switching_amount == 0:
-                                self.state = "i"
-                            else:
-                                self.state = "c"
-                                
-            if self.state == "c":
-                print("THIS NEXT ONE DOESNT COUNT! We're context switching")
-                self.graph_data.append(("c",timer))
+        print (self.graph_data)
         return self.graph_data
+    
