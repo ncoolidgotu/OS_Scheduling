@@ -2,6 +2,7 @@
 import  tkinter as     tk
 from    tkinter import filedialog
 from time import sleep
+from copy import deepcopy
 
 class Process:
     def __init__(self, pid, arrival_time, burst_time, priority):
@@ -60,17 +61,17 @@ class ProcessReader:
 #We create a class for Shortest Remaining Time First
 class SRTF:
     #we need a self initialization function to get the data the user specified
-    def __init__(self, quantum, context_switching_amount,list_of_processes):
-        self.quantum = quantum
-        self.context_switching_amount = context_switching_amount
-        self.list_of_processes = list_of_processes
-        self.state = "i" 
+    def __init__(self):
         #"i" = idle, "c" = context switching, "r" = running
+        self.state = "i"
         self.current_process = Process(999,999,999,999)
         self.completed = []
         self.graph_data = []
 
-    def scheduling(self):
+    def scheduling(self,quantum,context_switching_amount,list_of_processes):
+        self.quantum = quantum
+        self.context_switching_amount = context_switching_amount
+        self.list_of_processes = deepcopy(list_of_processes) 
         #ready queue for process
         ready_queue = []
         #these 2 values let us keep track of times, and when they finish
@@ -203,29 +204,4 @@ class SRTF:
             if self.state == "c":
                 print("THIS NEXT ONE DOESNT COUNT! We're context switching")
                 self.graph_data.append(("c",timer))
-
-if __name__ == '__main__':
-
-    '''
-    
-    FOR TESTING PURPOSES ONLY
-    
-    '''
-    quantum = 2
-    context_quantum = 1
-    '''
-    
-    FOR TESTING PURPOSES ONLY
-    
-    '''
-    #initialize an object of the process reader class
-    reader = ProcessReader()
-    #get the list of "process objects" from the chosen "file reader" object
-    processes = reader.selectFile()
-
-    srtf = SRTF(quantum,context_quantum,processes)
-    srtf.scheduling()
-    for i in srtf.completed:
-        print ("The process",i.pid,"finished at time",i.completed_time)
-
-    print (srtf.graph_data)
+        return self.graph_data
