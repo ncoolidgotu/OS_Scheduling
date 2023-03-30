@@ -8,10 +8,13 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pygame   #For background music
 import SJF_Caleb
+import SJF
 import RR
 import SRTF
+import FCFS
 import tkinter as tk
 from tkinter import filedialog
+import time
 
 class Process:
     def __init__(self, pid, arrival_time, burst_time, priority):
@@ -37,23 +40,24 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
 
     def select_Algo(self):
         print(self.selectAlgo.currentText())
+        if self.selectAlgo.currentText() == "FCFS":
+            fcfs = FCFS.FCFS()
+            self.stats = fcfs.scheduling(processQueue.processes)
+            print(self.stats)
         if self.selectAlgo.currentText() == "SJF":
-            sjf = SJF_Caleb.SJF()
-            print(processQueue.processes)
-            self.stats = sjf.processData(processQueue.processes)
+            sjf = SJF.SJF()
+            self.stats = sjf.scheduling(processQueue.processes)
             print(self.stats)
         elif self.selectAlgo.currentText() == "RR":
             quantumTime=int(self.quantumTime.text())
             contextSwitchTime=int(self.switchTime.text())
             rr = RR.RR()
-            print((quantumTime, contextSwitchTime, processQueue.processes))
             self.stats = rr.scheduling(quantumTime, contextSwitchTime, processQueue.processes)
             print(self.stats)
         elif self.selectAlgo.currentText() == "SRTF":
             quantumTime=int(self.quantumTime.text())
             contextSwitchTime=int(self.switchTime.text())
             srtf = SRTF.SRTF()
-            print((quantumTime, contextSwitchTime, processQueue.processes))
             self.stats = srtf.scheduling(quantumTime, contextSwitchTime, processQueue.processes)
             print(self.stats)
     
@@ -98,9 +102,10 @@ class Graph(FigureCanvas):
         for i in coord:
             time.append(i[1])
             proc_id.append(i[0])
+        
         left_coordinates = time
         heights=proc_id
-        plt.step(left_coordinates,heights)
+        plt.step(left_coordinates,heights,where='post')
         plt.xlabel('Time')
         plt.ylabel('Process ID')
         plt.title(gui.mainWindow.selectAlgo.currentText())
