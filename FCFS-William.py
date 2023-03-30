@@ -77,7 +77,7 @@ class FCFS:
         for x in range(len(process_data)):
             #appends the first process to the exit list
             if(x==0):
-                exit_time.append(process_data[x][2])
+                exit_time.append(process_data[x][2]+process_data[x][1])
             #for all other elements
             else:#if the arrival is greater than the last exit time
                 if (process_data[x][1]> exit_time[x-1]):
