@@ -243,40 +243,6 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
-   <widget class="QLineEdit" name="quantumTime">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>310</y>
-      <width>171</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Microsoft YaHei UI</family>
-      <pointsize>9</pointsize>
-     </font>
-    </property>
-    <property name="inputMask">
-     <string/>
-    </property>
-    <property name="text">
-     <string>1</string>
-    </property>
-    <property name="maxLength">
-     <number>1</number>
-    </property>
-    <property name="frame">
-     <bool>false</bool>
-    </property>
-    <property name="placeholderText">
-     <string>integer values only!!!</string>
-    </property>
-    <property name="cursorMoveStyle">
-     <enum>Qt::VisualMoveStyle</enum>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
@@ -395,7 +361,7 @@
     </item>
     <item>
      <property name="text">
-      <string>SRT</string>
+      <string>SRTF</string>
      </property>
     </item>
    </widget>
@@ -410,11 +376,11 @@
     </property>
     <layout class="QVBoxLayout" name="graphWindow"/>
    </widget>
-   <widget class="QLineEdit" name="switchTime">
+   <widget class="QSpinBox" name="quantumTime">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>240</y>
+      <y>311</y>
       <width>171</width>
       <height>31</height>
      </rect>
@@ -425,20 +391,30 @@
       <pointsize>9</pointsize>
      </font>
     </property>
-    <property name="text">
-     <string>1</string>
+    <property name="minimum">
+     <number>1</number>
     </property>
-    <property name="maxLength">
-     <number>32767</number>
+    <property name="maximum">
+     <number>10</number>
     </property>
-    <property name="frame">
-     <bool>false</bool>
+   </widget>
+   <widget class="QSpinBox" name="switchTime">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>241</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
     </property>
-    <property name="placeholderText">
-     <string>integer values only!!!</string>
+    <property name="font">
+     <font>
+      <family>Microsoft YaHei UI</family>
+      <pointsize>9</pointsize>
+     </font>
     </property>
-    <property name="cursorMoveStyle">
-     <enum>Qt::VisualMoveStyle</enum>
+    <property name="maximum">
+     <number>10</number>
     </property>
    </widget>
   </widget>
