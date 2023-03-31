@@ -36,13 +36,11 @@ class SJF:
         while True:
             #We run through our list of processes and if the arrival time is the same as our timer
             #then we add it to the ready queue (it has arrived)
-            for arrival in self.list_of_processes:
-                #check the object's "arrival time" attribute
+            for arrival in self.list_of_processes[:]:
                 if arrival.arrival_time == timer:
-                    #if it's time to enter the ready queue, it does
                     ready_queue.append(arrival)
-                    #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
-                    self.list_of_processes.remove(arrival)
+                    if arrival in self.list_of_processes:
+                        self.list_of_processes.remove(arrival)
 
             ready_queue.sort(key=lambda x: (x.remaining_time, -x.priority, x.pid))
 
@@ -53,6 +51,12 @@ class SJF:
                     self.current_process.remaining_time -= tempo
                     self.graph_data.append((self.current_process.pid,timer))
                     timer+=1
+                    
+                    if self.current_process.remaining_time == 0:
+                        self.state = "i"
+                        self.current_process.completed_time = timer
+                        ready_queue.remove(self.current_process)
+                        self.completed.append(self.current_process)
 
                 else:
                     #If we're just waiting on more processes, then we'll wait
@@ -64,11 +68,7 @@ class SJF:
                         #then we just end
                         break
 
-                    if self.current_process.remaining_time == 0:
-                        self.state = "i"
-                        self.current_process.completed_time = timer
-                        ready_queue.remove(self.current_process)
-                        self.completed.append(self.current_process)
+                    
 
             else:
                 self.current_process.remaining_time -= tempo

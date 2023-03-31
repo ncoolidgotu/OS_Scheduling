@@ -47,13 +47,11 @@ class RR:
         while True:
             #We run through our list of processes and if the arrival time is the same as our timer
             #then we add it to the ready queue (it has arrived)
-            for arrival in self.list_of_processes:
-                #check the object's "arrival time" attribute
+            for arrival in self.list_of_processes[:]:
                 if arrival.arrival_time == timer:
-                    #if it's time to enter the ready queue, it does
                     ready_queue.append(arrival)
-                    #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
-                    self.list_of_processes.remove(arrival)
+                    if arrival in self.list_of_processes:
+                        self.list_of_processes.remove(arrival)
 
             ready_queue.sort(key=lambda x: (x.switch_time, -x.priority, x.pid))
             

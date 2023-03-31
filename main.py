@@ -111,7 +111,7 @@ class Graph(FigureCanvas): #Class to create the graph in the GUI
         plt.xlabel('Time')
         plt.ylabel('Process ID')
         plt.title(gui.mainWindow.selectAlgo.currentText())
-   
+
 class ProcessReader:
     #Initiate and stablish a default filename of 'none'
     def __init__(self):
