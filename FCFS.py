@@ -34,7 +34,6 @@ class FCFS:
         self.list_of_processes.sort(key=lambda x: (x.arrival_time, -x.priority, x.pid))
 
         while True:
-            print("hi, the timer is:",timer)
             #We run through our list of processes and if the arrival time is the same as our timer
             #then we add it to the ready queue (it has arrived)
             for arrival in self.list_of_processes[:]:
