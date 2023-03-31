@@ -1,22 +1,25 @@
-import sys
-import numpy as np
-from PyQt6 import QtWidgets #For Changing GUI Screens
-from PyQt6.QtCore import QDate, QDateTime
+#Done by:
+#Nate Coolidge - 100 749 708
+#Caleb Fontaine - 100 832 588
+#Saief Shams - 100 836 639
+#Will Miller - 100 828 623
+#Jaime Gonzalez Sanz - 100 839 804
+
+import sys #For controlling GUI
+from PyQt6 import QtWidgets #For GUI Elements
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout #For GUI Functionality
 from PyQt6.uic import loadUi #For UI importing
-import matplotlib.pyplot as plt 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-import pygame   #For background music
-import SJF_Caleb
-import SJF
-import RR
-import SRTF
-import FCFS
-import tkinter as tk
+import matplotlib.pyplot as plt #For generating the graph
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas #For drawing the graph from matplotlib
+import pygame #For background music
+import SJF #Class for Shortest Job First algorithm
+import RR #Class for Round Robin algorithm
+import SRTF #Class for Shortest Remaining Time First algorithm
+import FCFS #Class for First Come First Serve
+import tkinter as tk #For file import dialog
 from tkinter import filedialog
-import time
 
-class Process:
+class Process: #Class for storing process information in an object
     def __init__(self, pid, arrival_time, burst_time, priority):
         self.pid = pid
         self.arrival_time = arrival_time
@@ -31,30 +34,29 @@ class Process:
 class MainWindow(QMainWindow): #Derived class of QMainWindow to control functionality inside the windows
     def __init__(self):
         # Create a QMdiArea widget
-        self.mdiArea = QtWidgets.QMdiArea()
-        super(MainWindow,self).__init__()
+        self.mdiArea = QtWidgets.QMdiArea() #This is for containing the graph
+        super(MainWindow,self).__init__() #Initialize Window
         loadUi("MainWindow.ui",self)  # Loads the window from main menu .ui file
         #self.inputFile.clicked.connect(ProcessReader.selectFile)  
-        self.showGraph.clicked.connect(self.updateGraph)
-        self.inputFile.clicked.connect(self.input_File)
+        self.showGraph.clicked.connect(self.updateGraph) #When i click the "show graph" button
+        self.inputFile.clicked.connect(self.input_File) #When i click the "import file" button
 
     def select_Algo(self):
-        print(self.selectAlgo.currentText())
-        if self.selectAlgo.currentText() == "FCFS":
+        if self.selectAlgo.currentText() == "FCFS": #If the selection box is set to "FCFS"
             fcfs = FCFS.FCFS()
             self.stats = fcfs.scheduling(processQueue.processes)
             print(self.stats)
-        if self.selectAlgo.currentText() == "SJF":
+        if self.selectAlgo.currentText() == "SJF": #If the selection box is set to "SJF"
             sjf = SJF.SJF()
             self.stats = sjf.scheduling(processQueue.processes)
             print(self.stats)
-        elif self.selectAlgo.currentText() == "RR":
+        elif self.selectAlgo.currentText() == "RR": #If the selection box is set to "RR"
             quantumTime=int(self.quantumTime.text())
             contextSwitchTime=int(self.switchTime.text())
             rr = RR.RR()
             self.stats = rr.scheduling(quantumTime, contextSwitchTime, processQueue.processes)
             print(self.stats)
-        elif self.selectAlgo.currentText() == "SRTF":
+        elif self.selectAlgo.currentText() == "SRTF": #If the selection box is set to "SRTF"
             quantumTime=int(self.quantumTime.text())
             contextSwitchTime=int(self.switchTime.text())
             srtf = SRTF.SRTF()
@@ -63,14 +65,14 @@ class MainWindow(QMainWindow): #Derived class of QMainWindow to control function
     
     def updateGraph(self):
         self.select_Algo()
-        try:
+        try: #If the graph doesn't exist, it needs to be created
             self.graphWindow.removeItem(self.graphWindow.itemAt(0))
         except TypeError:
             self.graphWindow.addWidget(Graph(self))
         self.graphWindow.addWidget(Graph(self))
     
     def input_File(self):
-        processQueue.generateQueue()
+        processQueue.generateQueue() #Function to import file
         
 
 class GUI: #Class to control GUI windows
@@ -87,9 +89,9 @@ class GUI: #Class to control GUI windows
             self.app.exec() #Execute GUI
 
 
-class Graph(FigureCanvas):
+class Graph(FigureCanvas): #Class to create the graph in the GUI
     def __init__(self, parent):
-        fig, self.ax = plt.subplots(figsize=(4, 3), dpi=200)
+        fig, self.ax = plt.subplots(figsize=(4, 3), dpi=200) #Set size and resolution of graph
         super().__init__(fig)
         self.setParent(parent)
 
@@ -105,18 +107,16 @@ class Graph(FigureCanvas):
         
         left_coordinates = time
         heights=proc_id
-        plt.step(left_coordinates,heights,where='post')
+        plt.step(left_coordinates,heights,where='post') #post means x axis is updated before y axis. This is necessary so the time shows correctly
         plt.xlabel('Time')
         plt.ylabel('Process ID')
         plt.title(gui.mainWindow.selectAlgo.currentText())
-
-        
+   
 class ProcessReader:
     #Initiate and stablish a default filename of 'none'
     def __init__(self):
         self.filename = None
         self.processes = self.selectFile()
-        
         
     #Prompts the user through tkinter to open a file, in which we get the appropiate file
     def select_file(self):

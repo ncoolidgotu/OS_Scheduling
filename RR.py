@@ -1,9 +1,7 @@
 #import the necessary modules
-import  tkinter as     tk
-from    tkinter import filedialog
-from time import sleep
 import copy
-
+#we create a process class here even though it exists in main
+#because we need to create a dummy process object for the logic
 class Process:
     def __init__(self, pid, arrival_time, burst_time, priority):
         #process id
@@ -12,54 +10,19 @@ class Process:
         self.burst_time = burst_time
         self.priority = priority
         self.remaining_time = burst_time
+        #self.crt means "current running time" | this checks with quantum, to see if it has
+        #to stop running and context switch
         self.crt = 0
+        #this keeps track of how long the proces has been saving its context for
+        #this is so we can compare with the total amount of context switching to stop and pick a new process
         self.contextS = 0
+        #this keeps track of the completed time. When the process' remaining time reaches 0
+        #the current time gets appended.
         self.completed_time = 0
+        #this is an updated arrival time. It keeps track of when the process
+        #joined or rejoined the ready_queue last. So that the processes are run in order
         self.switch_time = arrival_time
-
-#class used to read and open the files
-class ProcessReader:
-    #Initiate and stablish a default filename of 'none'
-    def __init__(self):
-        self.filename = None
-    #Prompts the user through tkinter to open a file, in which we get the appropiate file
-    def select_file(self):
-        root = tk.Tk()
-        root.withdraw()
-        self.filename = filedialog.askopenfilename()
-
-    #This function opens the file and then creates the process objects based on the information provided
-    def selectFile(self):
-        #Value necessary for the while loop to make sure the program doesnt break and the user can try again
-        self.incorrectFile = True
-        while self.incorrectFile:
-            try:
-                #if this class no attribute "filename" (initialized as such)
-                #then prompt it to select it, by using the previous function (named unfortunately similar)
-                if not self.filename or self.incorrectFile:
-                    self.select_file()
-                NumbProcesses = []
-                #open the file if possible (inside try)
-                with open(self.filename, 'r') as f:
-                    next(f)
-                    #go through each line in the file, and fill a list with Process OBJECTS
-                    for line in f:
-                        #We parse the info as specified in the assignment
-                        process_info = line.strip().split()
-                        pid = int(process_info[0])
-                        arrival_time = int(process_info[1])
-                        burst_time = int(process_info[2])
-                        priority = int(process_info[3])
-                        NumbProcesses.append(Process(pid, arrival_time, burst_time,priority))
-                #to exit the loop
-                self.incorrectFile = False
-                #return the list of process objects 
-                return NumbProcesses
-            #Print an error message if the user chooses an invalid file
-            except:
-                print("UNEXPECTED ERROR! Please choose the file again or contact the developer :)")
-
-#We create a class for Shortest Remaining Time First
+#We create a class for Round Robin
 class RR:
     #we need a self initialization function to get the data the user specified
     def __init__(self):
@@ -82,7 +45,6 @@ class RR:
         self.list_of_processes.sort(key=lambda x: (x.arrival_time, x.switch_time, -x.priority, x.pid))
 
         while True:
-            print("hi, the timer is:",timer)
             #We run through our list of processes and if the arrival time is the same as our timer
             #then we add it to the ready queue (it has arrived)
             for arrival in self.list_of_processes:
@@ -94,6 +56,14 @@ class RR:
                     self.list_of_processes.remove(arrival)
 
             ready_queue.sort(key=lambda x: (x.switch_time, -x.priority, x.pid))
+            
+            #then we sort the ready queue by the processes in the order they joined
+            #the ready queue last (so not the arrival time, but the updated arrival time, aka)
+            #followed by the biggest priority as a tiebreaker
+            #and the final tiebreaker being the smallest process ID (unique)
+
+            #From now on, there are 3 states the processor is going to be in
+            #and therefore 3 things it can do accordingly
 
             #If the processor is idle
             if self.state == "i":
@@ -109,20 +79,29 @@ class RR:
                     #because it ran for 1s, the "current running time" increases by 1
                     #this will be used in conjunction with the Quantum time later on
                     self.current_process.crt +=tempo
+                    #we then put the data of what process is being ran at the current time (eg. at time 0)
                     self.graph_data.append((self.current_process.pid,timer))
+                    #and then we advance the timer (otherwise it'd say it was running at time 1, not 0)
                     timer +=1
-
+                    #If the process is done after being ran for 1s (just got picked)
                     if self.current_process.remaining_time == 0:
+                        #then we put the processor in idle (pick another processor) state
                         self.state = "i"
+                        #give the process object it's own completed time
                         self.current_process.completed_time = timer
+                        #and change the lists its in
                         ready_queue.remove(self.current_process)
                         self.completed.append(self.current_process)
-                    
+                    #If for some reason the quantum is 1 and the context switching is 0 (there's no context switching)
                     elif self.quantum == 1 and self.context_switching_amount == 0:
+                        #then that means we're going to have pick a new process every time
                         self.state = "i"
-
+                    #if the process is not complete, and the processor doesnt have to choose a new process
+                    #every single time, we do a few other checks
                     else:
+                        #if the processor has reached quantum (usually, if quantum is 1)
                         if self.current_process.crt == self.quantum:
+                            #reset it's running state
                             self.current_process.switch_time = timer
                             self.current_process.crt = 0
                             for arrival in self.list_of_processes:
@@ -133,13 +112,14 @@ class RR:
                                     #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
                                     self.list_of_processes.remove(arrival)
                             ready_queue.sort(key=lambda x: (x.switch_time, -x.priority, x.pid))
-
+                            #after we did another sort (and checking if a new process arrived)
+                            #we check to see if the new process to be run is what we're running
+                            #or if it's a new process; because if it's new, we have context switch
                             if self.current_process == ready_queue[0]:
                                 self.state = "i"
                             else:
                                 self.state = "c"
-
-                #If not 2 cases happen
+                #If there's nothing int the ready queue, 2 cases happen
                 else:
                     #If we're just waiting on more processes, then we'll wait
                     if len(self.list_of_processes)>0:
@@ -147,10 +127,8 @@ class RR:
                         timer +=1
                     #If there's nothing in the ready queue and we're waiting on nothing else
                     else:
-                        print("Program ended at:",timer)
                         #then we just end
                         break
-
             #if the cpu is busy saving a context, we are in the "context saving" state (aka. "c")
             #we would only ever enter here if the context switching time is > 1:
             elif self.state == "c":
@@ -165,7 +143,6 @@ class RR:
                     self.current_process.switch_time = timer
                     #make the state of the cpu idle, so that it can properly run the latest process
                     self.state = "i"
-
             #if the cpu is busy running, we are in the "running" state (aka "c")
             #we would only ever enter here if the quantum > 1. 
             elif self.state == "r":
@@ -173,14 +150,14 @@ class RR:
                 self.current_process.crt += 1
                 self.graph_data.append((self.current_process.pid,timer))
                 timer +=1
-
+                #Quick check to see if the process is done
                 if self.current_process.remaining_time == 0:
                     self.state = "i"
                     self.current_process.completed_time = timer
                     ready_queue.remove(self.current_process)
                     self.completed.append(self.current_process)
                 else:
-                    print(self.current_process.crt)
+                    #check to see if the process has reached quantum
                     if self.current_process.crt == self.quantum:
                         self.current_process.crt = 0
                         self.current_process.switch_time = timer
@@ -192,15 +169,19 @@ class RR:
                                 #and then gets removed from the list_of_processes (we need to clear it all to end the cycle)
                                 self.list_of_processes.remove(arrival)
                         ready_queue.sort(key=lambda x: (x.switch_time, -x.priority, x.pid))
-
+                        #again, even if we've reached quantum, but the process to run is the same
+                        #we run it without going to context switching
                         if self.current_process == ready_queue[0]:
                             self.state = "i"
                         else:
+                            #if context switching is 0, then immediately pick another process
                             if self.context_switching_amount == 0:
                                 self.state = "i"
+                            #if not, spend a minimum of 1 in context switching
                             else:
                                 self.state = "c"
-                                
+            #this is for the graph data, we need to append it before we increase the timer                   
             if self.state == "c":
                 self.graph_data.append(("c",timer))
+        #once the entire code runs, we return graph data, with everything necessary for the correct graph!
         return self.graph_data        
